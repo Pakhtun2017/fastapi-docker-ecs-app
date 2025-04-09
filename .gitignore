@@ -1,0 +1,12 @@
+# .gitignore
+__pycache__/
+*.pyc
+.env
+venv/
+*.log
+*.sh
+.dockerignore
+tests/
+.aws/
+*.pem
+*.deb

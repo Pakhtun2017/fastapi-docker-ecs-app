@@ -1,0 +1,45 @@
+{
+  "family": "fastapi-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "1024",
+  "taskRoleArn": "arn:aws:iam::<AWS-ACCT-ID>:role/ECS_EC2Access_Role",
+  "executionRoleArn": "arn:aws:iam::<AWS-ACCT-ID>:role/ecsTaskExecutionRole",
+
+  "containerDefinitions": [
+    {
+      "name": "fastapi-container",
+      "image": "<AWS-ACCT-ID>.dkr.ecr.us-east-1.amazonaws.com/fastapi-app-repo:latest",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "FEATURE_SECURITY_GROUPS",
+          "value": "true"  
+        }
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fastapi-task",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "fastapi"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f -s -m 3 http://localhost:8000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 120
+      }
+    }
+
+  ]
+}
